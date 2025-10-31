@@ -1,10 +1,9 @@
 // This index.jsx file
-import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { onAuthStateChanged } from 'firebase/auth';
-import { addDoc, collection, onSnapshot, query, serverTimestamp, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, increment, onSnapshot, query, serverTimestamp, setDoc, where } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { auth, db } from '../../auth/firebase';
@@ -94,6 +93,20 @@ const Index = () => {
     };
   }, [currentUid]);
 
+  // Listen to user's cart from Firestore so cart is per-user
+  useEffect(() => {
+    if (!currentUid) {
+      setCart([]);
+      return;
+    }
+    const cartCol = collection(db, 'users', currentUid, 'cart');
+    const unsub = onSnapshot(cartCol, (snap) => {
+      const items = snap.docs.map((d) => ({ docId: d.id, ...d.data() }));
+      setCart(items);
+    });
+    return () => unsub();
+  }, [currentUid]);
+
   const activeTabInfo = TABS.find(tab => tab.name === activeTab);
   const ActiveComponent = activeTabInfo ? activeTabInfo.component : () => <Text>Invalid Tab</Text>;
 
@@ -122,15 +135,44 @@ if (!isLoggedIn) {
           setSelectedProduct(null);
           setActiveTab('Home');
         }}
-        onAddToCart={(product, selectedSize, selectedColor) => {
-          setCart([
-            ...cart,
-            {
-              ...product,
-              selectedSize,
-              selectedColor,
-            },
-          ]);
+        onAddToCart={async (product, selectedSize) => {
+          try {
+            if (currentUid) {
+              const cartDocId = `${product.id}_${selectedSize}`;
+              await setDoc(
+                doc(db, 'users', currentUid, 'cart', cartDocId),
+                {
+                  id: product.id,
+                  title: product.title,
+                  price: product.price,
+                  image: product.image,
+                  selectedSize,
+                  quantity: increment(1),
+                  updatedAt: serverTimestamp(),
+                },
+                { merge: true }
+              );
+            } else {
+              // Fallback to local cart if user not available
+              const existingIndex = cart.findIndex(
+                (item) => item.id === product.id && item.selectedSize === selectedSize
+              );
+              if (existingIndex !== -1) {
+                setCart(
+                  cart.map((it, i) =>
+                    i === existingIndex ? { ...it, quantity: (it.quantity || 1) + 1 } : it
+                  )
+                );
+              } else {
+                setCart([
+                  ...cart,
+                  { ...product, selectedSize, quantity: 1 },
+                ]);
+              }
+            }
+          } catch (e) {
+            console.warn('Failed to add to cart:', e);
+          }
           setLastViewedProduct(product);
           setSelectedProduct(null);
           setActiveTab('Cart');
@@ -212,6 +254,7 @@ if (!isLoggedIn) {
             onLogout={() => {
               setIsLoggedIn(false);
               setUserEmail('');
+              setCart([]);
             }} 
             onAdminPanelPress={() => setAdminScreen('AdminPanel')}
             userEmail={userEmail}
@@ -224,15 +267,37 @@ if (!isLoggedIn) {
               }
             }}
             cart={cart}
-            onDeleteItem={idx => {
-              setCart(cart.filter((_, i) => i !== idx));
+            onDeleteItem={async idx => {
+              try {
+                const item = cart[idx];
+                if (currentUid && item?.docId) {
+                  await deleteDoc(doc(db, 'users', currentUid, 'cart', item.docId));
+                } else {
+                  setCart(cart.filter((_, i) => i !== idx));
+                }
+              } catch (e) {
+                console.warn('Failed to delete cart item:', e);
+              }
             }}
-            onUpdateQuantity={(idx, delta) => {
-              setCart(cart.map((item, i) => {
-                if (i !== idx) return item;
+            onUpdateQuantity={async (idx, delta) => {
+              try {
+                const item = cart[idx];
+                if (!item) return;
                 const nextQty = Math.max(1, (item.quantity || 1) + delta);
-                return { ...item, quantity: nextQty };
-              }));
+                if (currentUid && item?.docId) {
+                  await setDoc(
+                    doc(db, 'users', currentUid, 'cart', item.docId),
+                    { quantity: nextQty, updatedAt: serverTimestamp() },
+                    { merge: true }
+                  );
+                } else {
+                  setCart(
+                    cart.map((it, i) => (i === idx ? { ...it, quantity: nextQty } : it))
+                  );
+                }
+              } catch (e) {
+                console.warn('Failed to update quantity:', e);
+              }
             }}
             onCheckout={() => {
               setShowPayment(true);
@@ -267,8 +332,8 @@ if (!isLoggedIn) {
               />
             )}
             {tab.name === 'Cart' && (
-              <AntDesign
-                name="shoppingcart"
+              <Ionicons
+                name="cart-outline"
                 size={24}
                 color={activeTab === 'Cart' ? '#000' : '#888'}
                 style={{ marginBottom: 2 }}

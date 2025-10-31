@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#E96E6E',
   },
   dataSource: {
     fontSize: 12,

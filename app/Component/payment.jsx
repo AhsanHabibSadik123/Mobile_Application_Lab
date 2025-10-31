@@ -1,5 +1,5 @@
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { default as AntDesign, default as Ionicons } from "@expo/vector-icons/Ionicons";
+import { addDoc, collection, deleteDoc, getDocs, serverTimestamp } from "firebase/firestore";
 import React, { useState } from "react";
 import {
   Alert,
@@ -85,6 +85,16 @@ const Payment = ({ onBack, cart = [], onOrderComplete }) => {
 
       // Save order to Firestore
       const docRef = await addDoc(collection(db, 'orders'), orderData);
+      // Clear user's cart in Firestore after successful order
+      try {
+        const uidForClear = auth.currentUser?.uid;
+        if (uidForClear) {
+          const snap = await getDocs(collection(db, 'users', uidForClear, 'cart'));
+          await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+        }
+      } catch (e) {
+        console.warn('Failed to clear cart after order:', e);
+      }
       // Create a user notification entry (Order placed)
       try {
         const uid = auth.currentUser?.uid;
@@ -136,7 +146,7 @@ const Payment = ({ onBack, cart = [], onOrderComplete }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <AntDesign name="arrowleft" size={24} color="white" />
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>Payment</Text>
       </View>

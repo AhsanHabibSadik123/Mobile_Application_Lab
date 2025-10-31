@@ -1,4 +1,5 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import {
   Alert,
@@ -67,7 +68,7 @@ const Cart = ({ onBack, cart = [], onDeleteItem, onCheckout, onUpdateQuantity })
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <AntDesign name="arrowleft" size={24} color="white" />
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>Your Cart</Text>
       </View>

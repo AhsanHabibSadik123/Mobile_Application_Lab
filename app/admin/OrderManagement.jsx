@@ -10,7 +10,7 @@ import {
   RefreshControl,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { db } from "../../auth/firebase";
 import { collection, getDocs, doc, updateDoc, onSnapshot } from "firebase/firestore";
@@ -260,7 +260,7 @@ const OrderManagement = ({ onBack, orders = [] }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <AntDesign name="arrowleft" size={24} color="white" />
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>Order Management</Text>
       </View>

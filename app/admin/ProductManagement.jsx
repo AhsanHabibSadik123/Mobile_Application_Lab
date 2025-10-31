@@ -1,4 +1,5 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
@@ -16,13 +17,13 @@ import {
 import { db } from "../../auth/firebase";
 
 // Move ProductForm outside to prevent re-creation
-const ProductForm = ({ 
-  visible, 
-  editingProduct, 
-  formData, 
-  setFormData, 
-  onClose, 
-  onSubmit 
+const ProductForm = ({
+  visible,
+  editingProduct,
+  formData,
+  setFormData,
+  onClose,
+  onSubmit
 }) => (
   <Modal
     visible={visible}
@@ -97,7 +98,7 @@ const ProductForm = ({
               autoCapitalize="characters"
             />
           </View>
-          
+
         </ScrollView>
 
         <View style={styles.modalActions}>
@@ -145,7 +146,7 @@ const ProductManagement = ({ onBack }) => {
       const productsCollection = collection(db, 'products');
       const q = query(productsCollection, orderBy('id', 'asc'));
       const querySnapshot = await getDocs(q);
-      
+
       const firestoreProducts = [];
       querySnapshot.forEach((doc) => {
         firestoreProducts.push({ docId: doc.id, ...doc.data() });
@@ -174,7 +175,7 @@ const ProductManagement = ({ onBack }) => {
     try {
       // Get the next ID
       const nextId = products.length > 0 ? Math.max(...products.map((p) => p.id)) + 1 : 1;
-      
+
       // Validate price input
       const priceValue = parseFloat(formData.price);
       if (isNaN(priceValue) || priceValue < 0) {
@@ -195,15 +196,15 @@ const ProductManagement = ({ onBack }) => {
 
       // Save to Firestore
       const docRef = await addDoc(collection(db, 'products'), newProduct);
-      
+
       // Update local state
       const productWithDocId = { ...newProduct, docId: docRef.id };
       setProducts([...products, productWithDocId]);
-      
-  // Reset form
-  setFormData({ title: "", price: "", image: "", sizes: "" });
+
+      // Reset form
+      setFormData({ title: "", price: "", image: "", sizes: "" });
       setShowAddModal(false);
-      
+
       Alert.alert("Success", "Product added successfully!");
     } catch (error) {
       console.error('Error adding product:', error);
@@ -248,7 +249,7 @@ const ProductManagement = ({ onBack }) => {
 
       setProducts(updatedProducts);
       setEditingProduct(null);
-  setFormData({ title: "", price: "", image: "", sizes: "" });
+      setFormData({ title: "", price: "", image: "", sizes: "" });
       Alert.alert("Success", "Product updated successfully!");
     } catch (error) {
       console.error('Error updating product:', error);
@@ -268,7 +269,7 @@ const ProductManagement = ({ onBack }) => {
           onPress: async () => {
             try {
               const productToDelete = products.find(p => p.id === productId);
-              
+
               // Delete from Firestore if product has docId
               if (productToDelete && productToDelete.docId) {
                 await deleteDoc(doc(db, 'products', productToDelete.docId));
@@ -318,7 +319,7 @@ const ProductManagement = ({ onBack }) => {
         <Text style={styles.productTitle}>{item.title}</Text>
         <Text style={styles.productPrice}>${(item.price || 0).toFixed(2)}</Text>
         <Text style={styles.productId}>ID: {item.id}</Text>
-        
+
       </View>
       <View style={styles.productActions}>
         <TouchableOpacity
@@ -340,8 +341,8 @@ const ProductManagement = ({ onBack }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <AntDesign name="arrowleft" size={24} color="white" />
+        <TouchableOpacity style={styles.backButton} onPress={onBack} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>Product Management</Text>
         <TouchableOpacity
@@ -354,7 +355,7 @@ const ProductManagement = ({ onBack }) => {
 
       <View style={styles.searchContainer}>
         <View style={styles.searchBox}>
-          <AntDesign name="search1" size={20} color="#999" />
+          <Ionicons name="search" size={20} color="#999" />
           <TextInput
             style={styles.searchInput}
             value={searchQuery}
@@ -385,7 +386,7 @@ const ProductManagement = ({ onBack }) => {
           contentContainerStyle={{ paddingBottom: 20 }}
         />
       )}
-      <ProductForm 
+      <ProductForm
         visible={showAddModal || editingProduct !== null}
         editingProduct={editingProduct}
         formData={formData}
@@ -537,7 +538,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#999",
   },
-  
+
   productActions: {
     flexDirection: "row",
     gap: 8,

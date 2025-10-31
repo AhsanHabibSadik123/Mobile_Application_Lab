@@ -1,18 +1,18 @@
+import Feather from "@expo/vector-icons/Feather";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
+  Dimensions,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
-  ScrollView,
-  Dimensions,
-  ActivityIndicator,
+  View,
 } from "react-native";
-import React, { useState, useEffect } from "react";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Feather from "@expo/vector-icons/Feather";
 import { db } from "../../auth/firebase";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
 
 const { width } = Dimensions.get("window");
 
@@ -64,7 +64,7 @@ const AdminPanel = ({ onBack, onNavigate }) => {
       id: 1,
       title: "Manage Products",
       description: "Add, edit, and delete products",
-      icon: "shoppingcart",
+      icon: "cart-outline",
       color: "#4CAF50",
       screen: "ProductManagement",
     },
@@ -72,7 +72,7 @@ const AdminPanel = ({ onBack, onNavigate }) => {
       id: 2,
       title: "Order Management",
       description: "View and manage customer orders",
-      icon: "filetext1",
+      icon: "document-text-outline",
       color: "#2196F3",
       screen: "OrderManagement",
     },
@@ -85,13 +85,13 @@ const AdminPanel = ({ onBack, onNavigate }) => {
       onPress={() => onNavigate(option.screen)}
     >
       <View style={[styles.iconContainer, { backgroundColor: option.color }]}>
-        <AntDesign name={option.icon} size={24} color="#fff" />
+        <Ionicons name={option.icon} size={24} color="#fff" />
       </View>
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{option.title}</Text>
         <Text style={styles.cardDescription}>{option.description}</Text>
       </View>
-      <AntDesign name="right" size={20} color="#ccc" />
+      <Ionicons name="chevron-forward" size={20} color="#ccc" />
     </TouchableOpacity>
   );
 
@@ -99,7 +99,7 @@ const AdminPanel = ({ onBack, onNavigate }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <AntDesign name="arrowleft" size={24} color="white" />
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>Admin Panel</Text>
         <View style={styles.adminBadge}>
@@ -149,7 +149,7 @@ const AdminPanel = ({ onBack, onNavigate }) => {
               style={[styles.quickActionBtn, { backgroundColor: "#4CAF50" }]}
               onPress={() => onNavigate("AddProduct")}
             >
-              <AntDesign name="plus" size={20} color="#fff" />
+              <Ionicons name="add" size={20} color="#fff" />
               <Text style={styles.quickActionText}>Add Product</Text>
             </TouchableOpacity>
             <TouchableOpacity
