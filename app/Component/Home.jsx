@@ -130,16 +130,8 @@ const Home = ({ onProductPress }) => {
           product.title.toLowerCase().includes('sweater') ||
           product.title.toLowerCase().includes('shirt')
         );
-      } else if (activeCategory === 'Sale') {
-
-        filteredProducts = filteredProducts.filter(product => product.price < 50);
-      } else if (activeCategory === 'Trending Now') {
-
-        filteredProducts = filteredProducts.slice(0, 6);
-      }
-
+      } 
     }
-
     return filteredProducts;
   };
 

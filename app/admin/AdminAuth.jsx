@@ -16,12 +16,6 @@ export const checkAdminAccess = async () => {
   }
 };
 
-// Legacy email-based admin check (keep for backward compatibility)
-export const ADMIN_EMAILS = [
-  "admin@fashionstore.com",
-  "manager@fashionstore.com", 
-  "supervisor@fashionstore.com",
-];
 
 export const isAdminEmail = (email) => {
   return ADMIN_EMAILS.includes(email?.toLowerCase());

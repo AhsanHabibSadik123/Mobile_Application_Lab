@@ -1,0 +1,23 @@
+# Exclude local/ephemeral native build artifacts from EAS tarball
+android/.gradle/
+android/.cxx/
+android/build/
+android/app/build/
+
+# Usual local caches
+.expo/
+.expo-shared/
+.gradle/
+
+# IDE/editor files
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log
+yarn-error.log

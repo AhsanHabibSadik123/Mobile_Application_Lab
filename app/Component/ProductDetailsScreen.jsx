@@ -1,5 +1,5 @@
 // This is my ProductDetailsScreen.jsx file
-import AntDesign from '@expo/vector-icons/AntDesign';
+import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -36,7 +36,7 @@ const ProductDetailsScreen = ({ product, onBack, onAddToCart, onBuyNow }) => {
         <View style={styles.container}>
             <View style={styles.backArrow}>
                 <TouchableOpacity style={styles.header} onPress={onBack}>
-                    <AntDesign name="arrowleft" size={24} color="white" />
+                    <Ionicons name="arrow-back" size={24} color="white" />
                 </TouchableOpacity>
             </View>
 

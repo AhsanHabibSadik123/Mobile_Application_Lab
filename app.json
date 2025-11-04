@@ -1,17 +1,18 @@
 {
   "expo": {
     "name": "Fashion-Ecommerce",
-    "slug": "Fashion-Ecommerce", 
+    "slug": "Fashion-Ecommerce",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "fashionecommerce",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+  "newArchEnabled": false,
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.ahsan_habib.FashionEcommerce"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3212d0bb-07ed-4d3c-8e21-f573e5a7529a"
+      }
+    },
+    "owner": "ahsan_habib"
   }
 }
